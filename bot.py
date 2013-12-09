@@ -12,17 +12,11 @@ from Queue import Queue
 import xmpp
 
 import config
-
-logf = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-logh = logging.StreamHandler()
-logh.setLevel(logging.DEBUG)
-logh.setFormatter(logf)
+import questions
 
 log = logging.getLogger("qme-bot")
-log.addHandler(logh)
-log.setLevel(logging.DEBUG)
 
+in_messages = None
 
 class AnswerType(object):
     @staticmethod
@@ -41,14 +35,6 @@ class Question(object):
         self.question = question
         self.path = path
         self.convert = convert
-
-
-questions = [
-    Question("Wie lange hast du geschlafen?", "qme.seri.bot.sleep", AnswerType.hm_timespan),
-]
-
-in_messages = Queue()
-
 
 class EventHandler(Thread):
     def __init__(self, client):
@@ -89,6 +75,9 @@ def xmpp_init(jid, password):
 
 
     client.sendInitPresence()
+
+    global in_messages
+    in_messages = Queue()
     client.RegisterHandler('message', message_handler)
 
     return client
@@ -137,6 +126,18 @@ def ask_questions(tojid, client, questions):
 
     say("KTHXBAI!")
 
+
+def setup_logger():
+    logf = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+    logh = logging.StreamHandler()
+    logh.setLevel(logging.DEBUG)
+    logh.setFormatter(logf)
+
+    log.addHandler(logh)
+    log.setLevel(logging.DEBUG)
+
+
 def main():
     if len(sys.argv) < 2:
         print "Syntax: bot JID"
@@ -144,12 +145,14 @@ def main():
 
     tojid=sys.argv[1]
 
+    setup_logger()
+
     client = xmpp_init(config.jid, config.password)
 
     handler = EventHandler(client)
     handler.start()
 
-    ask_questions(tojid, client, questions)
+    ask_questions(tojid, client, questions.questions)
 
     sys.exit(0)
 
