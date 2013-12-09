@@ -1,0 +1,24 @@
+* Idea
+Jabber bot that asks me a couple of questions each morning. I reply my
+answers; bot stores replies somewhere.
+
+** Example
+- Question :: How many hours of sleep?
+- Answer :: "10:54"
+- Record path :: qme.seri.bot.sleep.minutes
+- Conversion :: /some function/
+
+
+* Features
+** TODO Conversions
+- [X] simple HH:MM format
+- [ ] on a scale from 1 to 10
+
+** Jabber Bot
+Connects and asks questions. Checks answers, asks again if necessary.
+
+* Configuration
+Put jid, password in config.py
+
+* Dependencies
+- python-xmpp
