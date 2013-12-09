@@ -13,6 +13,7 @@ import xmpp
 
 import config
 import questions
+import util
 
 log = logging.getLogger("qme-bot")
 
@@ -114,15 +115,19 @@ def ask_questions(tojid, client, questions):
                 complain()
                 log.error("Answer conversion failed: %s", e)
 
+    def handle_answer(question):
+        util.submit(question.path, question.answer)
 
     say("HAI time to answer some questions:")
 
     for question in questions:
         ask(question)
 
-        answer = wait_for_answer(question)
+        question.answer = wait_for_answer(question)
 
-        log.info("Answer: %s", answer)
+        handle_answer(question)
+
+        log.info("Answer: %s", question.answer)
 
     say("KTHXBAI!")
 
